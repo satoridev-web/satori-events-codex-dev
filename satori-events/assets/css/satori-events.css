@@ -1,0 +1,262 @@
+.satori-events-archive {
+margin: 0 auto;
+max-width: 1200px;
+padding: 2rem 1rem;
+}
+
+.satori-events-archive__header {
+display: flex;
+flex-direction: column;
+gap: 1.5rem;
+margin-bottom: 2rem;
+}
+
+.satori-events-filters {
+display: flex;
+flex-wrap: wrap;
+gap: 1rem;
+align-items: flex-end;
+}
+
+.satori-events-filters__field {
+flex: 1 1 200px;
+}
+
+.satori-events-filters__field--search {
+flex-basis: 300px;
+}
+
+.satori-events-filters__actions {
+display: flex;
+gap: 0.75rem;
+align-items: center;
+}
+
+.satori-events-filters__clear {
+color: var(--wp--preset--color--primary, #0073aa);
+text-decoration: none;
+}
+
+.satori-events-view-toggle {
+display: inline-flex;
+border: 1px solid #dcdcde;
+border-radius: 999px;
+overflow: hidden;
+}
+
+.satori-events-view-toggle__button {
+padding: 0.5rem 1rem;
+font-weight: 600;
+text-decoration: none;
+color: #1d2327;
+background: #fff;
+}
+
+.satori-events-view-toggle__button.is-active {
+background: #1d2327;
+color: #fff;
+}
+
+.satori-events-results {
+display: grid;
+gap: 1.5rem;
+}
+
+.satori-events-view-grid .satori-events-results {
+grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.satori-events-view-list .satori-events-results {
+display: flex;
+flex-direction: column;
+}
+
+.satori-event-card {
+border: 1px solid #e0e0e0;
+border-radius: 12px;
+overflow: hidden;
+background: #fff;
+display: flex;
+flex-direction: column;
+height: 100%;
+transition: box-shadow 0.2s ease;
+}
+
+.satori-event-card__link {
+display: flex;
+flex-direction: column;
+flex: 1 1 auto;
+color: inherit;
+text-decoration: none;
+}
+
+.satori-event-card__image img {
+width: 100%;
+height: auto;
+display: block;
+}
+
+.satori-event-card__header {
+padding: 1.25rem 1.5rem 0.5rem;
+display: flex;
+flex-direction: column;
+gap: 0.5rem;
+}
+
+.satori-event-card__date {
+font-weight: 700;
+color: var(--wp--preset--color--primary, #0073aa);
+}
+
+.satori-event-card__title {
+margin: 0;
+font-size: 1.1rem;
+}
+
+.satori-event-card__excerpt {
+padding: 0 1.5rem 1.5rem;
+color: #4f4f4f;
+}
+
+.satori-event-card__time {
+font-size: 0.9rem;
+color: #6d6d6d;
+}
+
+.satori-event-card__footer {
+margin-top: auto;
+padding: 1rem 1.5rem;
+display: flex;
+flex-wrap: wrap;
+gap: 0.5rem 1rem;
+align-items: center;
+border-top: 1px solid #e0e0e0;
+}
+
+.satori-event-card__taxonomy {
+font-size: 0.85rem;
+color: #6d6d6d;
+}
+
+.satori-event-card__read-more {
+margin-left: auto;
+font-weight: 600;
+text-decoration: none;
+color: var(--wp--preset--color--primary, #0073aa);
+}
+
+.satori-event-card:hover {
+box-shadow: 0 15px 35px rgba(0, 0, 0, 0.08);
+}
+
+.satori-event-list-item {
+display: grid;
+grid-template-columns: minmax(160px, 220px) 1fr;
+gap: 1.5rem;
+padding: 1.5rem;
+border: 1px solid #e0e0e0;
+border-radius: 10px;
+background: #fff;
+}
+
+.satori-event-list-item__date span {
+font-weight: 700;
+font-size: 1rem;
+}
+
+.satori-event-list-item__title {
+margin: 0 0 0.5rem;
+font-size: 1.2rem;
+}
+
+.satori-event-list-item__title a {
+text-decoration: none;
+color: inherit;
+}
+
+.satori-event-list-item__excerpt {
+color: #4f4f4f;
+margin-bottom: 0.75rem;
+}
+
+.satori-event-list-item__location {
+font-size: 0.9rem;
+color: #6d6d6d;
+margin-bottom: 0.75rem;
+}
+
+.satori-event-list-item__read-more {
+font-weight: 600;
+text-decoration: none;
+color: var(--wp--preset--color--primary, #0073aa);
+}
+
+.satori-event-empty,
+.satori-events-empty {
+text-align: center;
+color: #6d6d6d;
+padding: 2rem 0;
+}
+
+.satori-event__header {
+display: grid;
+gap: 2rem;
+grid-template-columns: minmax(0, 1fr);
+margin-bottom: 2rem;
+}
+
+.satori-event__summary {
+display: flex;
+flex-direction: column;
+gap: 1rem;
+}
+
+.satori-event__meta {
+list-style: none;
+padding: 0;
+margin: 0;
+display: grid;
+gap: 0.5rem;
+}
+
+.satori-event__meta strong {
+font-weight: 600;
+margin-right: 0.25rem;
+}
+
+.satori-event__content {
+margin-bottom: 2rem;
+}
+
+.satori-event__back {
+text-decoration: none;
+font-weight: 600;
+color: var(--wp--preset--color--primary, #0073aa);
+}
+
+@media (min-width: 768px) {
+.satori-events-archive__header {
+flex-direction: row;
+align-items: center;
+justify-content: space-between;
+}
+
+.satori-event__header {
+grid-template-columns: 320px 1fr;
+}
+}
+
+@media (max-width: 600px) {
+.satori-event-list-item {
+grid-template-columns: 1fr;
+}
+
+.satori-events-filters {
+flex-direction: column;
+align-items: stretch;
+}
+
+.satori-events-filters__actions {
+justify-content: flex-start;
+}
+}
