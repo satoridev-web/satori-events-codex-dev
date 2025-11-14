@@ -46,7 +46,8 @@ class Single_Controller {
 	 */
 	public static function get_event_meta( $post_id ) {
 		$meta = [
-			'event_date'      => get_post_meta( $post_id, '_satori_events_date', true ),
+                        'event_date'      => get_post_meta( $post_id, '_satori_events_date', true ),
+                        'event_date_end'  => get_post_meta( $post_id, '_satori_events_date_end', true ),
 			'time_start'      => get_post_meta( $post_id, '_satori_events_time_start', true ),
 			'time_end'        => get_post_meta( $post_id, '_satori_events_time_end', true ),
 			'venue'           => get_post_meta( $post_id, '_satori_events_venue', true ),
