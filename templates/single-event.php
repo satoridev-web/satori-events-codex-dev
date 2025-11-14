@@ -5,6 +5,7 @@
  * @package Satori\Events
  */
 
+use Satori\Events\Frontend\Date_Helper;
 use Satori\Events\Frontend\Single_Controller;
 
 get_header();
@@ -17,7 +18,7 @@ the_post();
 $meta        = Single_Controller::get_event_meta( get_the_ID() );
 $date_format = get_option( 'date_format', 'F j, Y' );
 $time_format = get_option( 'time_format', 'g:i a' );
-$event_date  = ! empty( $meta['event_date'] ) ? wp_date( $date_format, strtotime( $meta['event_date'] ) ) : '';
+$event_date  = Date_Helper::format_event_date_range( $meta['event_date'], $meta['event_date_end'], $date_format );
 $time_start  = ! empty( $meta['time_start'] ) ? wp_date( $time_format, strtotime( $meta['time_start'] ) ) : '';
 $time_end    = ! empty( $meta['time_end'] ) ? wp_date( $time_format, strtotime( $meta['time_end'] ) ) : '';
 $categories  = get_the_term_list( get_the_ID(), 'event_category', '', ', ' );

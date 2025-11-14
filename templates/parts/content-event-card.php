@@ -5,11 +5,12 @@
  * @package Satori\Events
  */
 
-$event_id    = get_the_ID();
-$date_value  = get_post_meta( $event_id, '_satori_events_date', true );
-$date_format = get_option( 'date_format', 'M j, Y' );
-$time_format = get_option( 'time_format', 'g:i a' );
-$event_date  = $date_value ? wp_date( $date_format, strtotime( $date_value ) ) : '';
+$event_id       = get_the_ID();
+$date_value     = get_post_meta( $event_id, '_satori_events_date', true );
+$date_end_value = get_post_meta( $event_id, '_satori_events_date_end', true );
+$date_format    = get_option( 'date_format', 'M j, Y' );
+$time_format    = get_option( 'time_format', 'g:i a' );
+$event_date     = \Satori\Events\Frontend\Date_Helper::format_event_date_range( $date_value, $date_end_value, $date_format );
 $time_start  = get_post_meta( $event_id, '_satori_events_time_start', true );
 $time_start  = $time_start ? wp_date( $time_format, strtotime( $time_start ) ) : '';
 $categories  = get_the_term_list( $event_id, 'event_category', '', ', ' );

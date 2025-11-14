@@ -18,8 +18,9 @@ class Event_Meta {
 	 *
 	 * @var array<string,string>
 	 */
-	protected $meta_keys = [
-		'event_date'      => '_satori_events_date',
+        protected $meta_keys = [
+                'event_date'      => '_satori_events_date',
+                'event_date_end'  => '_satori_events_date_end',
 		'time_start'      => '_satori_events_time_start',
 		'time_end'        => '_satori_events_time_end',
 		'venue'           => '_satori_events_venue',
@@ -34,9 +35,10 @@ class Event_Meta {
 	 *
 	 * @return void
 	 */
-	public function register() {
-		add_action( 'add_meta_boxes', [ $this, 'register_meta_boxes' ] );
-		add_action( 'save_post_event', [ $this, 'save_meta' ] );
+        public function register() {
+                add_action( 'add_meta_boxes', [ $this, 'register_meta_boxes' ] );
+                add_action( 'save_post_event', [ $this, 'save_meta' ] );
+                add_action( 'admin_notices', [ $this, 'maybe_render_invalid_end_date_notice' ] );
 	}
 
 	/**
@@ -71,10 +73,14 @@ class Event_Meta {
 			$values[ $key ] = get_post_meta( $post->ID, $meta_key, true );
 		}
 		?>
-		<p>
-			<label for="satori-events-date"><strong><?php esc_html_e( 'Event Date', 'satori-events' ); ?></strong></label><br />
-			<input type="date" id="satori-events-date" name="satori_events[event_date]" value="<?php echo esc_attr( $values['event_date'] ); ?>" required />
-		</p>
+                <p>
+                        <label for="satori-events-date"><strong><?php esc_html_e( 'Event Date', 'satori-events' ); ?></strong></label><br />
+                        <input type="date" id="satori-events-date" name="satori_events[event_date]" value="<?php echo esc_attr( $values['event_date'] ); ?>" required />
+                </p>
+                <p>
+                        <label for="satori-events-date-end"><strong><?php esc_html_e( 'End Date', 'satori-events' ); ?></strong></label><br />
+                        <input type="date" id="satori-events-date-end" name="satori_events[event_date_end]" value="<?php echo esc_attr( $values['event_date_end'] ); ?>" />
+                </p>
 		<p>
 			<label for="satori-events-time-start"><?php esc_html_e( 'Start Time', 'satori-events' ); ?></label><br />
 			<input type="time" id="satori-events-time-start" name="satori_events[time_start]" value="<?php echo esc_attr( $values['time_start'] ); ?>" />
@@ -138,11 +144,24 @@ class Event_Meta {
 			$date_raw = '';
 		}
 
-		if ( $date_raw ) {
-			update_post_meta( $post_id, $this->meta_keys['event_date'], $date_raw );
-		} else {
-			delete_post_meta( $post_id, $this->meta_keys['event_date'] );
-		}
+                if ( $date_raw ) {
+                        update_post_meta( $post_id, $this->meta_keys['event_date'], $date_raw );
+                } else {
+                        delete_post_meta( $post_id, $this->meta_keys['event_date'] );
+                }
+
+                $end_date_raw = isset( $data['event_date_end'] ) ? sanitize_text_field( $data['event_date_end'] ) : '';
+                $end_date     = '';
+
+                if ( $end_date_raw ) {
+                        if ( $this->is_valid_date( $end_date_raw ) && $date_raw && $end_date_raw >= $date_raw ) {
+                                $end_date = $end_date_raw;
+                        } else {
+                                $this->flag_invalid_end_date();
+                        }
+                }
+
+                $this->update_optional_meta( $post_id, 'event_date_end', $end_date );
 
 		$time_start = isset( $data['time_start'] ) ? sanitize_text_field( $data['time_start'] ) : '';
 		if ( $time_start && ! $this->is_valid_time( $time_start ) ) {
@@ -197,11 +216,57 @@ class Event_Meta {
 	 *
 	 * @return bool
 	 */
-	protected function is_valid_date( $value ) {
-		$dt = \DateTime::createFromFormat( 'Y-m-d', $value );
+        protected function is_valid_date( $value ) {
+                $dt = \DateTime::createFromFormat( 'Y-m-d', $value );
 
-		return $dt && $dt->format( 'Y-m-d' ) === $value;
-	}
+                return $dt && $dt->format( 'Y-m-d' ) === $value;
+        }
+
+        /**
+         * Flag invalid end date so we can show a notice.
+         *
+         * @return void
+         */
+        protected function flag_invalid_end_date() {
+                if ( ! has_filter( 'redirect_post_location', [ $this, 'add_invalid_end_date_notice_arg' ] ) ) {
+                        add_filter( 'redirect_post_location', [ $this, 'add_invalid_end_date_notice_arg' ] );
+                }
+        }
+
+        /**
+         * Append query arg to trigger invalid end date notice.
+         *
+         * @param string $location Redirect location.
+         *
+         * @return string
+         */
+        public function add_invalid_end_date_notice_arg( $location ) {
+                remove_filter( 'redirect_post_location', [ $this, __FUNCTION__ ] );
+
+                return add_query_arg( 'satori_invalid_end_date', 1, $location );
+        }
+
+        /**
+         * Maybe render invalid end date admin notice.
+         *
+         * @return void
+         */
+        public function maybe_render_invalid_end_date_notice() {
+                if ( empty( $_GET['satori_invalid_end_date'] ) ) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+                        return;
+                }
+
+                $screen = function_exists( 'get_current_screen' ) ? get_current_screen() : null;
+
+                if ( $screen && 'event' !== $screen->post_type ) {
+                        return;
+                }
+
+                printf(
+                        '<div class="notice notice-error is-dismissible"><p>%s</p></div>',
+                        esc_html__( 'End date must be the same as or after the start date.', 'satori-events' )
+                );
+        }
 
 	/**
 	 * Validate H:i time.
